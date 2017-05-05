@@ -1,7 +1,7 @@
-function [tests] = robustnonlinlsqcurvefit_test()
-%ROBUSTNONLINLSQCURVEFIT_TEST <purpose in one line!>
+function [tests] = robustlsqcurvefit_test()
+%ROBUSTLSQCURVEFIT_TEST <purpose in one line!>
 %
-% Usage: [tests] = robustnonlinlsqcurvefit_test()
+% Usage: [tests] = robustlsqcurvefit_test()
 %
 %
 % Author:  J.-A. Adrian (JA) <jensalrik.adrian AT gmail.com>
@@ -22,9 +22,11 @@ param = [0.5, 1.25];
 x = linspace(0, 6, 100);
 modelFun = @(param, x) param(1)*exp(param(2) * x);
 
-noise = 10*sin(x).^2 .* randn(size(x));
+noise = sin(x).^2 .* randn(size(x));
 
 y = modelFun(param, x) + noise;
+y(10) = 200;
+y(50) = 400;
 
 testCase.TestData.trueParams = param;
 testCase.TestData.x = x;
@@ -42,7 +44,7 @@ fun = testCase.TestData.modelFun;
 
 x0 = [1, 1];
 
-estParams = robustnonlinlsqcurvefit(fun, x0, x, y);
+robustlsqcurvefit(fun, x0, x, y);
 end
 
 function testFullCall(testCase)
@@ -55,14 +57,16 @@ x0 = [1, 1];
 lb = [0.1, 1];
 ub = [  1, 2];
 
+weightMethod = 'bisquare';
+
 options = optimset('lsqnonlin');
 options.Display = 'off';
 
-[x,resnorm,residual,exitflag,output,lambda,jacobian] = ...
-    robustnonlinlsqcurvefit(fun, x0, x, y, lb, ub, options);
+outputs = cell(7, 1);
+[outputs] = robustlsqcurvefit(fun, x0, x, y, lb, ub, weightMethod, options);
 end
 
 
 
 
-% End of file: robustnonlinlsqcurvefit_test.m
+% End of file: robustlsqcurvefit_test.m
