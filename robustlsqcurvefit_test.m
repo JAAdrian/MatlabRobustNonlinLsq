@@ -33,6 +33,7 @@ testCase.TestData.x = x;
 testCase.TestData.y = y;
 testCase.TestData.noise = noise;
 testCase.TestData.modelFun = modelFun;
+testCase.TestData.x0 = [1, 1];
 end
 
 
@@ -42,7 +43,7 @@ x = testCase.TestData.x;
 y = testCase.TestData.y;
 fun = testCase.TestData.modelFun;
 
-x0 = [1, 1];
+x0 = testCase.TestData.x0
 
 robustlsqcurvefit(fun, x0, x, y);
 end
@@ -52,7 +53,7 @@ x = testCase.TestData.x;
 y = testCase.TestData.y;
 fun = testCase.TestData.modelFun;
 
-x0 = [1, 1];
+x0 = testCase.TestData.x0;
 
 lb = [0.1, 1];
 ub = [  1, 2];
@@ -64,6 +65,18 @@ options.Display = 'off';
 
 outputs = cell(7, 1);
 [outputs] = robustlsqcurvefit(fun, x0, x, y, lb, ub, weightMethod, options);
+end
+
+function testInputValidation(testCase)
+x = testCase.TestData.x;
+y = testCase.TestData.y;
+fun = testCase.TestData.modelFun;
+
+x0 = testCase.TestData.x0;
+
+actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'foo');
+
+testCase.verifyError(actual, 'MATLAB:unrecognizedStringChoice');
 end
 
 
