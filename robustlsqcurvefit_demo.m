@@ -8,25 +8,31 @@ clear;
 close all;
 
 %% Easy Linear Model With Noise and Outliers
-x = (1:10)';
+x = (0:10)';
 rng default; % For reproducibility
-y = 10 - 2*x + randn(size(x));
-y(10) = 0;
+y = -2*x + 10 + randn(size(x));
+y(11) = 0;
 
 modelFun = @(params, x) params(1)*x + params(2);
-x0       = [1, 1];
+x0       = [-1, 1];
+
+weightFun = 'bisquare';
 
 estParamsReference = polyfit(x, y, 1);
-estParams          = robustlsqcurvefit(modelFun, x0, x, y);
+estParams          = robustlsqcurvefit(modelFun, x0, x, y, [], [], weightFun);
+estRobustFit       = robustfit(x, y);
 
 figure;
 hold on;
 scatter(x, y, 'filled');
-plot(x, modelFun(estParamsReference, x));
-plot(x, modelFun(estParams, x));
+plot(x, modelFun([-2, 10], x), 'k--', 'linewidth', 2);
+plot(x, modelFun(estParamsReference, x), 'linewidth', 2);
+plot(x, modelFun(estParams, x), 'linewidth', 2);
+hold off;
+grid on;
 
 legend(...
-    {'Noisy Data', 'Ordinary non-lin LSQ', 'Robust non-lin LSQ'}, ...
+    {'Noisy Data', 'True Regression', 'Ordinary non-lin LSQ', 'Robust non-lin LSQ'}, ...
     'fontsize', 12 ...
     );
 
@@ -48,17 +54,18 @@ x0 = [0.3, 2];
 options = optimset('lsqnonlin');
 options.Display = 'off';
 
-method = 'huber';
+method = 'bisquare';
 
 estParamsReference = lsqcurvefit(modelFun, x0, x, y, [], [], options);
 estParams          = robustlsqcurvefit(modelFun, x0, x, y, [], [], method, options);
 
-figure(1);
+figure;
 hold on;
-plot(x, y);
-plot(x, modelFun(estParamsReference, x));
-plot(x, modelFun(estParams, x));
+scatter(x, y, 'filled');
+plot(x, modelFun(estParamsReference, x), 'linewidth', 2);
+plot(x, modelFun(estParams, x), 'linewidth', 2);
 hold off;
+grid on;
 
 legend(...
     {'Noisy Data', 'Ordinary non-lin LSQ', 'Robust non-lin LSQ'}, ...
