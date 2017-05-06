@@ -39,6 +39,8 @@ weightMethod = validatestring(...
     {'bisquare', 'andrews', 'cauchy', 'fair', 'huber', 'logistic', 'ols', 'talwar', 'welsch'} ...
     );
 
+convergenceThreshold = 1e-6;
+
 varargout = cell(max(nargout, 1), 1);
 
 xdata = xdata(:);
@@ -59,7 +61,7 @@ while ~hasConverged && iterationCounter < options.MaxIter
         lsqnonlin(weightedFun, x0, lb, ub, options);
     
     thisEstimate = varargout{1};
-    hasConverged = norm(thisEstimate - previousEstimate) < options.TolFun;
+    hasConverged = norm(thisEstimate - previousEstimate)^2 < convergenceThreshold;
     
     %%% update weights
     residuals = ydata - fun(thisEstimate, xdata);
