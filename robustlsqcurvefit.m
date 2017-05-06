@@ -62,7 +62,7 @@ while ~hasConverged && iterationCounter < options.MaxIter
     hasConverged = norm(thisEstimate - previousEstimate) < options.TolFun;
     
     %%% update weights
-    residuals = ydata - weightedFun(thisEstimate);
+    residuals = ydata - fun(thisEstimate, xdata);
     residuals = residuals(:);
     
     residualLeverages = leverage(residuals);
