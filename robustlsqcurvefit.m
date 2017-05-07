@@ -86,6 +86,8 @@ function [varargout] = robustlsqcurvefit(fun, x0, xdata, ydata, lb, ub, weightMe
 
 % History:  v0.1.0  initial version, 05-May-2017 (JA)
 %           v0.2.0  fix bugs, update documentation, 07-May-2017 (JA)
+%           v0.2.1  update documentation, 07-May-2017 (JA)
+%           v0.2.2  update version info, 07-May-2017 (JA)
 %
 
 
