@@ -1,4 +1,4 @@
-% <purpose of this file>
+% Demonstrate robustlsqcurvefit() in some applications
 %
 % Author:  J.-A. Adrian (JA) <jensalrik.adrian AT gmail.com>
 % Date  :  05-May-2017 22:46:35
@@ -18,7 +18,7 @@ y(11) = 0;
 modelFun = @(params, x) params(1)*x + params(2);
 x0       = [-1, 1];
 
-options = optimset('lsqnonlin');
+options = optimset(@lsqcurvefit);
 options.Display = 'off';
 
 estParamsReference = polyfit(x, y, 1);
@@ -55,7 +55,7 @@ y(end) = 2000;
 
 x0 = [0.3, 2];
 
-options = optimset('lsqnonlin');
+options = optimset(@lsqcurvefit);
 options.Display = 'off';
 
 estParamsReference = lsqcurvefit(modelFun, x0, x, y, [], [], options);
@@ -71,11 +71,11 @@ hold off;
 grid on;
 
 legend(...
-    {'Noisy Data', 'Ordinary non-lin LSQ', 'Robust non-lin LSQ'}, ...
+    {'Noisy Data', 'True Regression', 'Ordinary non-lin LSQ', 'Robust non-lin LSQ'}, ...
     'fontsize', 12 ...
     );
 
-%% Square-Root Function Fit
+%% Square-Root Function Fit incl. Lower and Upper Parameter Bounds
 trueParams = [50, -0.7];
 
 x = linspace(0, 20, 100);
@@ -86,7 +86,7 @@ noise = sin(x).^2 .* randn(size(x));
 y = modelFun(trueParams, x) + noise;
 
 % introduce outliers
-y(1)   = -300;
+y(11)  = -300;
 y(end) = 2000;
 
 lb = [1, -inf];
@@ -94,7 +94,7 @@ ub = [inf, 10];
 
 x0 = [1, -1];
 
-options = optimset('lsqnonlin');
+options = optimset(@lsqcurvefit);
 options.Display = 'off';
 
 estParamsReference = lsqcurvefit(modelFun, x0, x, y, lb, ub, options);
