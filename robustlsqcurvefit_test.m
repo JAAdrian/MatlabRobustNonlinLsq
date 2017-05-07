@@ -81,10 +81,15 @@ x0 = testCase.TestData.x0;
 
 options = testCase.TestData.options;
 
-%% Wrong Input
+%% Wrong WeightMethod Input
 actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'foo', options);
 
 testCase.verifyError(actual, 'MATLAB:unrecognizedStringChoice');
+
+%% Wrong lb Input
+actual = @() robustlsqcurvefit(fun, x0, x, y, 'foo', [], [], options);
+
+testCase.verifyError(actual, 'MATLAB:robustlsqcurvefit:invalidType');
 
 %% Correct Input
 actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'ols', options);
