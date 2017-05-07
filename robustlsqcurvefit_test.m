@@ -28,12 +28,16 @@ y = modelFun(param, x) + noise;
 y(10) = 200;
 y(50) = 400;
 
+options = optimset(@lsqnonlin);
+options.Display = 'off';
+
 testCase.TestData.trueParams = param;
 testCase.TestData.x = x;
 testCase.TestData.y = y;
 testCase.TestData.noise = noise;
 testCase.TestData.modelFun = modelFun;
 testCase.TestData.x0 = [1, 1];
+testCase.TestData.options = options;
 end
 
 
@@ -43,9 +47,11 @@ x = testCase.TestData.x;
 y = testCase.TestData.y;
 fun = testCase.TestData.modelFun;
 
-x0 = testCase.TestData.x0
+x0 = testCase.TestData.x0;
 
-robustlsqcurvefit(fun, x0, x, y);
+options = testCase.TestData.options;
+
+robustlsqcurvefit(fun, x0, x, y, [], [], [], options);
 end
 
 function testFullCall(testCase)
@@ -55,16 +61,15 @@ fun = testCase.TestData.modelFun;
 
 x0 = testCase.TestData.x0;
 
+options = testCase.TestData.options;
+
 lb = [0.1, 1];
 ub = [  1, 2];
 
 weightMethod = 'bisquare';
 
-options = optimset('lsqnonlin');
-options.Display = 'off';
-
-outputs = cell(7, 1);
-[outputs] = robustlsqcurvefit(fun, x0, x, y, lb, ub, weightMethod, options);
+outputs = cell(7, 1); %#ok<PREALL>
+[outputs] = robustlsqcurvefit(fun, x0, x, y, lb, ub, weightMethod, options); %#ok<*NASGU>
 end
 
 function testInputValidation(testCase)
@@ -74,10 +79,34 @@ fun = testCase.TestData.modelFun;
 
 x0 = testCase.TestData.x0;
 
-actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'foo');
+options = testCase.TestData.options;
+
+%% Wrong Input
+actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'foo', options);
 
 testCase.verifyError(actual, 'MATLAB:unrecognizedStringChoice');
+
+%% Correct Input
+actual = @() robustlsqcurvefit(fun, x0, x, y, [], [], 'ols', options);
+
+testCase.verifyWarningFree(actual);
 end
+
+function testPrecision(testCase)
+x = testCase.TestData.x;
+y = testCase.TestData.y;
+fun = testCase.TestData.modelFun;
+
+x0 = testCase.TestData.x0;
+
+options = testCase.TestData.options;
+
+est = robustlsqcurvefit(fun, x0, x, y, [], [], [], options); %#ok<*NASGU>
+
+testCase.verifyLessThan(norm(est - testCase.TestData.trueParams).^2, 1e-4);
+end
+
+
 
 
 
