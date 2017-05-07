@@ -8,7 +8,8 @@ function [tests] = robustlsqcurvefit_test()
 % Date  :  05-May-2017 11:27
 %
 
-% History:  v0.1  initial version, 05-May-2017 (JA)
+% History:  v0.1.0  initial version, 05-May-2017 (JA)
+%           v0.2.0  implement new unit test functions, 07-May-2017 (JA)
 %
 
 
@@ -28,7 +29,7 @@ y = modelFun(param, x) + noise;
 y(10) = 200;
 y(50) = 400;
 
-options = optimset(@lsqnonlin);
+options = optimset(@lsqcurvefit);
 options.Display = 'off';
 
 testCase.TestData.trueParams = param;
