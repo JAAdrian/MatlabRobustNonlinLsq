@@ -130,8 +130,7 @@ while ~hasConverged && iterationCounter < options.MaxIter
     weightedFun = ...
         @(params) (fun(params, xdata) - ydata) .* sqrt(weights);
     
-    [varargout{:}] = ...
-        lsqnonlin(weightedFun, x0, lb, ub, options);
+    varargout{:} = lsqnonlin(weightedFun, x0, lb, ub, options);
     
     thisEstimate = varargout{1};
     hasConverged = norm(thisEstimate - previousEstimate)^2 < convergenceThreshold;
