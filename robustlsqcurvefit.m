@@ -145,7 +145,10 @@ while ~hasConverged && iterationCounter < options.MaxIter
     
     r = residuals ./ (tuningConstant * robustVar * sqrt(1 - residualLeverages));
     
-    weights = weightFunction(r);
+    % following https://members.loria.fr/moberger/Enseignement/Master2/Documents/ZhangIVC-97-01.pdf,
+    % equation (25):
+    % scale the weights by the residuals
+    weights = weightFunction(r) / r;
     previousEstimate = thisEstimate;
     iterationCounter = iterationCounter + 1;
 end
