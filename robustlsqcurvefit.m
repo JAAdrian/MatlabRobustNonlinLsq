@@ -125,11 +125,12 @@ weights          = ones(size(xdata));
 iterationCounter = 1;
 while ~hasConverged && iterationCounter < options.MaxIter
     %%% weighted LSQ
+    % define the cost function which will be squared and summed by lsqnonlin(). Due to the latter
+    % point, the weights have to be square-rooted here.
     weightedFun = ...
-        @(params) (fun(params, xdata) - ydata) .* weights;
+        @(params) (fun(params, xdata) - ydata) .* sqrt(weights);
     
-    [varargout{:}] = ...
-        lsqnonlin(weightedFun, x0, lb, ub, options);
+    varargout{:} = lsqnonlin(weightedFun, x0, lb, ub, options);
     
     thisEstimate = varargout{1};
     hasConverged = norm(thisEstimate - previousEstimate)^2 < convergenceThreshold;
