@@ -45,12 +45,12 @@ classdef Robustlsqcurvefit_test < matlab.unittest.TestCase
             x = testCase.X;
             y = testCase.Y;
             fun = testCase.ModelFun;
-            
             x0 = testCase.X0;
-            
             options = testCase.Options;
             
-            testCase.Unit(fun, x0, x, y, [], [], [], options);
+            outputs = testCase.Unit(fun, x0, x, y, [], [], [], options);
+            testCase.verifyNumElements(outputs, 2);
+            testCase.verifyLessThan(norm(outputs - testCase.TrueParams).^2, 1e-4);
         end
         
         
@@ -58,9 +58,7 @@ classdef Robustlsqcurvefit_test < matlab.unittest.TestCase
             x = testCase.X;
             y = testCase.Y;
             fun = testCase.ModelFun;
-            
             x0 = testCase.X0;
-            
             options = testCase.Options;
             
             lb = [0.1, 1];
@@ -68,8 +66,9 @@ classdef Robustlsqcurvefit_test < matlab.unittest.TestCase
             
             weightMethod = 'bisquare';
             
-            outputs = cell(7, 1); %#ok<PREALL>
-            outputs = testCase.Unit(fun, x0, x, y, lb, ub, weightMethod, options); %#ok<*NASGU>
+            outputs = testCase.Unit(fun, x0, x, y, lb, ub, weightMethod, options);
+            testCase.verifyNumElements(outputs, 2);
+            testCase.verifyLessThan(norm(outputs - testCase.TrueParams).^2, 1e-4);
         end
         
         
@@ -77,24 +76,19 @@ classdef Robustlsqcurvefit_test < matlab.unittest.TestCase
             x = testCase.X;
             y = testCase.Y;
             fun = testCase.ModelFun;
-            
             x0 = testCase.X0;
-            
             options = testCase.Options;
             
             % Wrong WeightMethod Input
             actual = @() testCase.Unit(fun, x0, x, y, [], [], 'foo', options);
-            
             testCase.verifyError(actual, 'MATLAB:unrecognizedStringChoice');
             
             % Wrong lb Input
             actual = @() testCase.Unit(fun, x0, x, y, 'foo', [], [], options);
-            
             testCase.verifyError(actual, 'MATLAB:robustlsqcurvefit:invalidType');
             
             % Correct Input
             actual = @() testCase.Unit(fun, x0, x, y, [], [], 'ols', options);
-            
             testCase.verifyWarningFree(actual);
         end
         
@@ -103,14 +97,22 @@ classdef Robustlsqcurvefit_test < matlab.unittest.TestCase
             x = testCase.X;
             y = testCase.Y;
             fun = testCase.ModelFun;
-            
             x0 = testCase.X0;
-            
             options = testCase.Options;
             
-            est = testCase.Unit(fun, x0, x, y, [], [], [], options); %#ok<*NASGU>
-            
+            est = testCase.Unit(fun, x0, x, y, [], [], [], options);
             testCase.verifyLessThan(norm(est - testCase.TrueParams).^2, 1e-4);
+        end
+        
+        
+        function canUseLessParameters(testCase)
+            x = testCase.X;
+            y = testCase.Y;
+            fun = testCase.ModelFun;
+            x0 = testCase.X0; 
+            
+            outputs = testCase.Unit(fun, x0, x, y);
+            testCase.verifyNumElements(outputs, 2);
         end
     end
 end
