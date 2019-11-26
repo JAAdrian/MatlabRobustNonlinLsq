@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.4] - 2019-11-26
 ### Added
+- Unit test is a TestCase class now
 - FileExchange banner in README
 
 ## [0.2.3] - 2019-04-02
