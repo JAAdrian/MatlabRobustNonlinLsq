@@ -1,3 +1,5 @@
+[![View MatlabRobustNonlinLsq on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://de.mathworks.com/matlabcentral/fileexchange/62830-matlabrobustnonlinlsq)
+
 # MatlabRobustNonlinLsq
 
 MATLAB's function `robustfit()` enables to fit a polynomial to data whose residuals are not normally distributed, which is the implicit assumption of least squares (LSQ) methods. Non-normal residuals result, for example, from outliers in empirical data or noise which is not normally distributed. The function utilizes the *Iteratively Reweighted Least Squares* (IRLS) approach with data-adaptive weights.

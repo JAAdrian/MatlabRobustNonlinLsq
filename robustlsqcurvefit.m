@@ -88,6 +88,8 @@ function [varargout] = robustlsqcurvefit(fun, x0, xdata, ydata, lb, ub, weightMe
 %           v0.2.0  fix bugs, update documentation, 07-May-2017 (JA)
 %           v0.2.1  update documentation, 07-May-2017 (JA)
 %           v0.2.2  update version info, 07-May-2017 (JA)
+%           v0.2.3  fix missing sqrt-ing of the weights, 02-Apr-2019 (JA)
+%           v0.2.4  include MathWorks FileExchange banner in README, 26-Nov-2019 (JA)
 %
 
 
@@ -286,6 +288,3 @@ switch lower(method)
 end
 end
 
-
-
-% End of file: robustlsqcurvefit.m
